@@ -10,7 +10,7 @@ const withNextra = nextra({
   search: {
     codeblocks: false
   },
-  contentDirBasePath: '/docs',
+  contentDirBasePath: '/wiki',
 })
 
 export default withNextra(

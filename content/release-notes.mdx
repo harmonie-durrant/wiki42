@@ -9,11 +9,11 @@ import { ReleaseNotes } from "@/components/ReleaseNotes/ReleaseNotes";
 export const metadata = {
     // Here, not in a front matter: Nextra refuses a page that has both.
     description:
-        "Release notes of the Mantine, Next.js and Nextra template, fetched from its GitHub releases and updated automatically.",
+        "Release notes of Wiki42, fetched from its GitHub releases and updated automatically.",
     toc: await (async () => {
         try {
             const res = await fetch(
-                "https://api.github.com/repos/gfazioli/next-app-nextra-template/releases?per_page=10"
+                "https://api.github.com/repos/harmonie-durrant/wiki42/releases?per_page=10"
             );
             const releases = await res.json();
             if (!Array.isArray(releases)) return [];

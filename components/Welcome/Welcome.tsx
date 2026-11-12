@@ -4,7 +4,6 @@ import { TextAnimate } from '@gfazioli/mantine-text-animate';
 import { IconBrandGithub, IconExternalLink } from '@tabler/icons-react';
 import { Anchor, Button, Center, Code, Paper, Text, Title } from '@mantine/core';
 import pack from '../../package.json';
-import { ProductHunt } from '../ProductHunt/ProductHunt';
 import classes from './Welcome.module.css';
 
 export function Welcome() {

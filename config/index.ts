@@ -5,31 +5,22 @@ export default {
    */
   metadata: {
     title: {
-      default: 'Mantine Next.js and Nextra template',
-      template: '%s | Mantine Next.js and Nextra template',
+      default: 'Wiki42',
+      template: '%s | Wiki42',
     },
     description:
-      'A Next.js App Router starter with Mantine 9 and Nextra 4: an MDX documentation site with Mantine components, search, dark mode and release notes.',
-    metadataBase: new URL('https://next-app-nextra-template.vercel.app/'),
-    keywords: [
-      'Mantine',
-      'Nextra',
-      'Next.js',
-      'React',
-      'JavaScript',
-      'MDX',
-      'Markdown',
-      'Static Site Generator',
-    ],
+      'The unofficial 42 wiki, made for current and future 42 students, by the 42 community.',
+    metadataBase: new URL('https://wiki42.harmoniedurrant.com/'),
+    keywords: ['Wiki42', '42', '42 school', 'wiki'],
     generator: 'Next.js',
-    applicationName: 'Mantine',
+    applicationName: 'Wiki42',
     appleWebApp: {
-      title: 'Mantine',
+      title: 'Wiki42',
     },
     openGraph: {
       // https://github.com/vercel/next.js/discussions/50189#discussioncomment-10826632
       url: './',
-      siteName: 'Mantine',
+      siteName: 'Wiki42',
       locale: 'en_US',
       type: 'website',
     },
@@ -37,7 +28,7 @@ export default {
       'msapplication-TileColor': '#fff',
     },
     twitter: {
-      site: 'https://next-app-nextra-template.vercel.app/',
+      site: 'https://wiki42.harmoniedurrant.com/',
     },
     alternates: {
       // https://github.com/vercel/next.js/discussions/50189#discussioncomment-10826632
@@ -48,7 +39,7 @@ export default {
    * Nextra Layout component configuration
    */
   nextraLayout: {
-    docsRepositoryBase: 'https://github.com/gfazioli/next-app-nextra-template/tree/main/app/docs/',
+    docsRepositoryBase: 'https://github.com/harmonie-durrant/wiki42/tree/main',
     sidebar: {
       defaultMenuCollapseLevel: 1,
     },
@@ -78,9 +69,9 @@ export default {
    * This information is used to fetch the releases from the GitHub API.
    */
   gitHub: {
-    repo: 'gfazioli/next-app-nextra-template',
+    repo: 'harmonie-durrant/wiki42',
     apiUrl: 'https://api.github.com',
-    releasesUrl: 'https://api.github.com/repos/gfazioli/next-app-nextra-template/releases',
+    releasesUrl: 'https://api.github.com/repos/harmonie-durrant/wiki42/releases',
   },
 
   /**
@@ -88,7 +79,7 @@ export default {
    * This is used to link the release notes in the app.
    */
   releaseNotes: {
-    url: 'https://github.com/gfazioli/next-app-nextra-template/releases',
+    url: 'https://github.com/harmonie-durrant/wiki42/releases',
     maxReleases: 10,
   },
 

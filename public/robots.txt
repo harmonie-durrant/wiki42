@@ -1,4 +1,4 @@
-# https://next-app-nextra-template.vercel.app/robots.txt
+# https://wiki42.harmoniedurrant.com/robots.txt
 #
 # One policy for every site on the Vercel team, kept in step with the
 # Vercel firewall: the AI bots managed ruleset denies AI crawlers, and the
@@ -216,4 +216,4 @@ Disallow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://next-app-nextra-template.vercel.app/sitemap.xml
+Sitemap: https://wiki42.harmoniedurrant.com/sitemap.xml

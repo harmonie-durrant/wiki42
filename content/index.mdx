@@ -1,76 +1,50 @@
 ---
-description: "Introduction to the Mantine, Next.js and Nextra template: its features, how the folders are organised and the npm scripts for building, testing and more."
+description: "An introduction to 42, the tuition-free coding school with no teachers and no classes, and a map of this unofficial wiki."
 ---
 
-import { Button } from '@mantine/core';
-import { Callout, FileTree, Steps } from 'nextra/components'
-import { FileTreeLabel } from '@/components/FileTreeLabel'
+import { Cards } from 'nextra/components'
 
 # Introduction
 
-Hello, world!
-Welcome to the Nextra + Mantine template.
+Welcome to **Wiki42**, the unofficial wiki of 42, written by students for current and future students.
 
-This is a starter template for [Next.js](https://nextjs.org/) app router + [Mantine](https://mantine.dev/) + [Nextra](https://nextra.site/) documentation site.
+> [!NOTE]
+>
+> This wiki is not affiliated with 42. Rules and schedules change over time and can differ from one campus to another: when in doubt, the intra and your campus staff have the final word.
 
-## Features
+## What is 42?
 
-This template comes with the following features:
+42 is a network of computer programming schools, founded in Paris in 2013, with campuses all over the world. It does things differently from most schools:
 
-- [PostCSS](https://postcss.org/) with [mantine-postcss-preset](https://mantine.dev/styles/postcss-preset)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Storybook](https://storybook.js.org/)
-- [Jest](https://jestjs.io/) setup with [React Testing Library](https://testing-library.com/docs/react-testing-library/intro)
-- ESLint setup with [eslint-config-mantine](https://github.com/mantinedev/eslint-config-mantine)
-- Provides API example in `/api/version`
+- **Tuition-free.** Studying at 42 costs nothing.
+- **No teachers, no classes.** You learn by working on projects, searching for answers and asking other students.
+- **Peer-to-peer.** Your work is evaluated by other students, and you evaluate theirs.
+- **Project-based.** Every skill is learned by building something: a library, a shell, a game, a web server…
+- **No diploma required.** Anyone old enough can apply; what counts is motivation and the ability to learn.
+- **Gamified.** You earn experience, levels and skills as you validate projects.
 
-## Nextra Features
+## How the journey works
 
-- [Nextra](https://nextra.site/) documentation site with Mantine theme
-- Sync Dark mode between documentation and application (Mantine/Nextra)
-- Customizable components in `components` folder
-- Provides new Navigation and Footer components for Nextra documentation site
+1. **[Admissions](/wiki/admissions)**: online logic games, then a check-in to book your place in a Piscine.
+2. **[The Piscine](/wiki/piscine)**: an intensive selection month where you learn the basics of C and the shell, and find out whether 42's way of learning suits you.
+3. **[The Common Core](/wiki/common-core)**: once admitted, a sequence of projects that takes you from rewriting standard C functions to building a full web application.
+4. **After the Common Core**: internships, specialisations and advanced projects, depending on your campus.
 
-## Folder structure
+## Where to start
 
-You will find a lot of predefined folders and files in the project. Here is a short description of the most important ones:
+<Cards>
+  <Cards.Card title="Admissions" href="/wiki/admissions" arrow />
+  <Cards.Card title="The Piscine" href="/wiki/piscine" arrow />
+  <Cards.Card title="The Common Core" href="/wiki/common-core" arrow />
+  <Cards.Card title="Glossary" href="/wiki/glossary" arrow />
+</Cards>
 
-<FileTree>
-  <FileTree.Folder name="app" defaultOpen>
-      <FileTree.Folder name={<FileTreeLabel type="folder" name="api">Useful API</FileTreeLabel>} defaultOpen />
-          <FileTree.File name={<FileTreeLabel type="file" name="layout.tsx">Main layout</FileTreeLabel>} />
-      <FileTree.File name={<FileTreeLabel type="file" name="page.tsx">Homepage</FileTreeLabel>} />
-  </FileTree.Folder>
-  <FileTree.Folder name={<FileTreeLabel type="folder" name="components">Useful components</FileTreeLabel>} defaultOpen />
-  <FileTree.Folder name="config" defaultOpen>
-    <FileTree.File name={<FileTreeLabel type="file" name="index.ts">Most of the config are here!</FileTreeLabel>} />
-  </FileTree.Folder>
-  <FileTree.Folder name={<FileTreeLabel type="folder" name="content">MDX docs</FileTreeLabel>} defaultOpen />
-</FileTree>
+New to 42 vocabulary? Words like *Moulinette*, *Norminette*, *evaluation points* or *black hole* are explained in the [Glossary](/wiki/glossary).
 
-You can start by changing the main configuration in `config/index.ts` file. This file contains the most important configuration for the project.
+## Contributing
 
+Something missing or wrong? This wiki lives on [GitHub](https://github.com/harmonie-durrant/wiki42), and anyone can propose a change: read the [contributing guide](https://github.com/harmonie-durrant/wiki42/blob/main/CONTRIBUTING.md) to get started.
 
-
-## npm scripts
-
-### Build and dev scripts
-
-- `dev` – start dev server
-- `build` – bundle application for production
-- `analyze` – analyzes application bundle with [@next/bundle-analyzer](https://www.npmjs.com/package/@next/bundle-analyzer)
-
-### Testing scripts
-
-- `typecheck` – checks TypeScript types
-- `lint` – runs ESLint
-- `prettier:check` – checks files with Prettier
-- `jest` – runs jest tests
-- `jest:watch` – starts jest watch
-- `test` – runs `jest`, `prettier:check`, `lint` and `typecheck` scripts
-
-### Other scripts
-
-- `storybook` – starts storybook dev server
-- `storybook:build` – build production storybook bundle to `storybook-static`
-- `prettier:write` – formats all files with Prettier
+> [!IMPORTANT]
+>
+> This wiki explains concepts and shares advice, but it never publishes project solutions. Learning by struggling is the whole point of 42.

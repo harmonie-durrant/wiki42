@@ -8,8 +8,6 @@ export interface Sponsor {
 }
 
 /**
- * Current GitHub sponsors, shown in the footer sponsors wall.
- * Add new sponsors here — the change propagates to every derived site
- * through the usual template propagation flow.
+ * Current GitHub sponsors, shown in the home-page sponsors wall. Add new sponsors here.
  */
 export const sponsors: Sponsor[] = [];

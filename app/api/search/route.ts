@@ -28,7 +28,7 @@ export async function GET(request: Request) {
     return Response.json({ error: 'No search query provided' }, { status: 200 });
   }
 
-  const script_src = `${url.origin}/docs`;
+  const script_src = `${url.origin}/wiki`;
 
   // hard patch for pagefind
   if (typeof global.window === 'undefined') {

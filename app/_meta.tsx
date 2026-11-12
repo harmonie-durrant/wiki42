@@ -5,28 +5,9 @@ export default {
   index: {
     display: 'hidden',
   },
-  docs: {
+  wiki: {
     type: 'page',
-    title: 'Documentation',
-  },
-  community: {
-    title: 'Community',
-    type: 'menu',
-    items: {
-      blog: {
-        title: 'Blog',
-        href: 'https://undolog.com/',
-      },
-      medium: {
-        title: 'Medium',
-        href: 'https://medium.com/@giovambattista.fazioli',
-      },
-    },
-  },
-  about: {
-    type: 'page',
-    title: 'About',
-    href: 'https://gfazioli.github.io/',
+    title: 'Wiki',
   },
   support: {
     title: 'Support',
@@ -51,7 +32,7 @@ export default {
             Buy me a coffee
           </Group>
         ),
-        href: 'https://donate.stripe.com/fZu4gy4Tn3b1dgudGx0co00',
+        href: 'https://buymeacoffee.com/harmonie',
       },
     },
   },

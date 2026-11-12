@@ -30,7 +30,7 @@ export function ReleaseNotes() {
     );
   }
 
-  if (isLoading || data.length === 0) {
+  if (isLoading) {
     return (
       <Stack mt={24} w="100%" align="center">
         <Group>
@@ -41,6 +41,14 @@ export function ReleaseNotes() {
         <Skeleton height={50} width="100%" radius={12} />
         <Skeleton height={20} width="100%" radius={12} />
       </Stack>
+    );
+  }
+
+  if (data.length === 0) {
+    return (
+      <Text my={32} c="dimmed" ta="center">
+        No releases found.
+      </Text>
     );
   }
 

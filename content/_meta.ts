@@ -2,20 +2,15 @@ export default {
   index: 'Introduction',
   '##': {
     type: 'separator',
+    title: 'Your path at 42',
   },
-  markdown: '',
-  'inline-svg': 'Inline SVG',
-  mantine: '',
-  api: '',
-
+  admissions: '',
+  piscine: 'The Piscine',
+  'common-core': 'The Common Core',
   '###': {
     type: 'separator',
-    // title: 'My Items', // Title is optional
+    title: 'Reference',
   },
-  versioning: {
-    theme: {
-      toc: false,
-    },
-  },
+  glossary: '',
   'release-notes': '',
 };

@@ -1,8 +1,15 @@
 'use client';
 
 import { BorderAnimate, type BorderAnimateProps } from '@gfazioli/mantine-border-animate';
-import { IconArrowRight, IconFileText, IconFlag, IconPackages, IconSquare } from '@tabler/icons-react';
+import {
+  IconArrowRight,
+  IconFileText,
+  IconFlag,
+  IconPackages,
+  IconSquare,
+} from '@tabler/icons-react';
 import { Group, SimpleGrid, Stack, Text, ThemeIcon, Title, UnstyledButton } from '@mantine/core';
+import { Contributors } from '../Contributors/Contributors';
 import { Sponsors } from '../Sponsors/Sponsors';
 import classes from './Content.module.css';
 
@@ -82,6 +89,7 @@ export const Content = () => {
         />
       </SimpleGrid>
 
+      <Contributors />
       <Sponsors />
     </Stack>
   );

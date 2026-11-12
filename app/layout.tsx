@@ -14,7 +14,7 @@ import { getPageMap } from 'nextra/page-map';
 import { ColorSchemeScript, mantineHtmlProps, MantineProvider } from '@mantine/core';
 // !! End of important imports !!
 
-import { MantineFooter, MantineNavBar } from '@/components';
+import { MantineNavBar } from '@/components';
 import config from '@/config';
 import pack from '../package.json';
 import { theme } from '../theme';
@@ -59,12 +59,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body>
         <MantineProvider theme={theme} defaultColorScheme={head.mantine.defaultColorScheme}>
           <Layout
-            banner={
-              <Banner storageKey={`release-notes-${pack.version}`}>
-                ✨ v{pack.version} Released -{' '}
-                <a href="/docs/release-notes">See the release notes</a>
-              </Banner>
-            }
             navbar={<MantineNavBar />}
             pageMap={pageMap}
             docsRepositoryBase={nextraLayout.docsRepositoryBase}
