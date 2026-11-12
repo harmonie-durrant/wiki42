@@ -1,44 +1,35 @@
 'use client';
 
 import { BorderAnimate, type BorderAnimateProps } from '@gfazioli/mantine-border-animate';
-import {
-  IconArrowRight,
-  IconFileText,
-  IconFlag,
-  IconPackages,
-  IconSquare,
-} from '@tabler/icons-react';
+import { IconArrowRight, IconBook, IconVocabulary } from '@tabler/icons-react';
 import { Group, SimpleGrid, Stack, Text, ThemeIcon, Title, UnstyledButton } from '@mantine/core';
 import { Contributors } from '../Contributors/Contributors';
 import { Sponsors } from '../Sponsors/Sponsors';
 import classes from './Content.module.css';
 
-interface EcosystemBoxProps {
+interface WikiCardProps {
   href: string;
   icon: React.ReactNode;
   title: string;
   description: string;
-  beamProps?: Partial<BorderAnimateProps>;
 }
 
-const EcosystemBox = ({ href, icon, title, description, beamProps }: EcosystemBoxProps) => (
+const beamProps: Partial<BorderAnimateProps> = {
+  beamMode: 'dot',
+  colorFrom: 'cyan',
+  colorTo: 'indigo',
+  size: 'lg',
+  duration: 6,
+};
+
+const WikiCard = ({ href, icon, title, description }: WikiCardProps) => (
   <BorderAnimate radius="lg" h="100%" {...beamProps}>
-    <UnstyledButton
-      component="a"
-      href={href}
-      target="_blank"
-      rel="noreferrer"
-      p="xl"
-      className={classes.card}
-    >
+    <UnstyledButton component="a" href={href} p="xl" className={classes.card}>
       <Stack gap="sm">
         <Group gap="sm" wrap="nowrap">
           <ThemeIcon
             variant="gradient"
-            gradient={{
-              from: (beamProps?.colorFrom as string) ?? 'blue',
-              to: (beamProps?.colorTo as string) ?? 'cyan',
-            }}
+            gradient={{ from: beamProps.colorFrom as string, to: beamProps.colorTo as string }}
             size="lg"
             radius="md"
           >
@@ -50,43 +41,36 @@ const EcosystemBox = ({ href, icon, title, description, beamProps }: EcosystemBo
           {description}
         </Text>
         <Group gap={4} c="blue" fz="sm" fw={500}>
-          Explore <IconArrowRight size={16} />
+          Read <IconArrowRight size={16} />
         </Group>
       </Stack>
     </UnstyledButton>
   </BorderAnimate>
 );
 
+const wikiCards: WikiCardProps[] = [
+  {
+    href: '/wiki',
+    icon: <IconBook size={20} />,
+    title: 'Introduction',
+    description:
+      'What 42 is, how the journey works from admissions to the Common Core, and where to start.',
+  },
+  {
+    href: '/wiki/glossary',
+    icon: <IconVocabulary size={20} />,
+    title: 'Glossary',
+    description: 'Moulinette, Norminette, black hole, evaluation points: 42 vocabulary explained.',
+  },
+];
+
 export const Content = () => {
   return (
     <Stack align="center" my="2vh">
       <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="xl" maw={860} w="100%" mx="auto" my={32}>
-        <EcosystemBox
-          href="https://minesweeper.harmoniedurrant.com/"
-          icon={<IconFlag size={20} />}
-          title="Minesweeper"
-          description="The docs are coming soon so for now take a look at one of my projects."
-          beamProps={{
-            beamMode: 'dot',
-            colorFrom: 'cyan',
-            colorTo: 'indigo',
-            size: 'lg',
-            duration: 6,
-          }}
-        />
-        <EcosystemBox
-          href="https://voxels.harmoniedurrant.com/"
-          icon={<IconPackages size={20} />}
-          title="Voxels"
-          description="The docs are coming soon so for now take a look at one of my projects."
-          beamProps={{
-            beamMode: 'dot',
-            colorFrom: 'cyan',
-            colorTo: 'indigo',
-            size: 'lg',
-            duration: 6,
-          }}
-        />
+        {wikiCards.map((card) => (
+          <WikiCard key={card.href} {...card} />
+        ))}
       </SimpleGrid>
 
       <Contributors />
