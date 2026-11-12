@@ -10,11 +10,8 @@ import classes from './Welcome.module.css';
 export function Welcome() {
   return (
     <>
-      <Center my={64}>
-        <ProductHunt />
-      </Center>
-      <Title maw="90vw" mx="auto" className={classes.title} ta="center">
-        Welcome to Mantine Next.js +
+      <Title maw="90vw" mt={32} mx="auto" className={classes.title} ta="center">
+        Welcome to
         <TextAnimate
           animate="in"
           by="character"
@@ -29,52 +26,15 @@ export function Welcome() {
           }}
           gradient={{ from: 'pink', to: 'yellow' }}
         >
-          Nextra
+          Wiki42
         </TextAnimate>
-        template
       </Title>
 
       <Text c="dimmed" ta="center" size="xl" maw={580} mx="auto" mt="sm">
-        This starter Next.js project includes a minimal setup for server side rendering, if you want
-        to learn more on Mantine + Next.js integration follow{' '}
-        <Anchor href="https://mantine.dev/guides/next/">this guide</Anchor>. To get started edit{' '}
-        <Code fz="xl">page.tsx</Code> file.
+        The unofficial 42 wiki, made for current and future 42 students, by the 42 community !
+        If you wish to contribute make a pull request on{' '}
+        <Anchor href="https://github.com/harmonie-durrant/wiki42">Github</Anchor>.
       </Text>
-
-      <Center>
-        <Button
-          href="https://github.com/gfazioli/next-app-nextra-template"
-          component="a"
-          rightSection={<IconExternalLink />}
-          leftSection={<IconBrandGithub />}
-          variant="outline"
-          px={32}
-          radius={256}
-          size="lg"
-          mx="auto"
-          mt="xl"
-        >
-          Use template v{pack.version}
-        </Button>
-      </Center>
-
-      <Paper shadow="xl" p={8} mih={300} my={32} bg="black" mx="auto" radius={8}>
-        <TextAnimate.Typewriter
-          fz={11}
-          c="green.5"
-          ff="monospace"
-          multiline
-          delay={100}
-          loop={false}
-          value={[
-            'Dependencies :',
-            ...Object.keys(pack.dependencies).map(
-              (key: string) =>
-                `${key} : ${pack.dependencies[key as keyof typeof pack.dependencies].toString()}`
-            ),
-          ]}
-        />
-      </Paper>
     </>
   );
 }

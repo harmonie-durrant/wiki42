@@ -80,9 +80,7 @@ export const Sponsors = () => {
         Sponsors
       </Title>
       <Text fz={15} c="dimmed" ta="center" maw={560}>
-        If my open-source work saves you or your team time, consider sponsoring its development.
-        Sponsors get their name or logo featured here and across all my projects' documentation
-        sites.
+        If work saves you from the black hole and you wish to thank me, consider buying me a coffee to say thanks !
       </Text>
       <Group justify="center" gap="xl">
         {sponsors.map((sponsor) => (
@@ -107,26 +105,11 @@ export const Sponsors = () => {
             </Stack>
           </Anchor>
         ))}
-        <Anchor
-          href="https://github.com/sponsors/gfazioli"
-          target="_blank"
-          rel="noopener noreferrer"
-          underline="never"
-        >
-          <Stack gap={4} align="center">
-            <Avatar size="lg" radius="xl" className={classes.sponsorSlot}>
-              <IconPlus size={20} />
-            </Avatar>
-            <Text fz={12} c="dimmed">
-              Your logo here
-            </Text>
-          </Stack>
-        </Anchor>
       </Group>
       <Group gap="sm" justify="center">
         <Button
           component="a"
-          href="https://github.com/sponsors/gfazioli"
+          href="https://github.com/sponsors/harmonie-durrant"
           target="_blank"
           rel="noopener noreferrer"
           color="red"
@@ -136,7 +119,7 @@ export const Sponsors = () => {
         </Button>
         <Button
           component="a"
-          href="https://donate.stripe.com/fZu4gy4Tn3b1dgudGx0co00"
+          href="https://buymeacoffee.com/harmonie"
           target="_blank"
           rel="noopener noreferrer"
           variant="default"
@@ -145,30 +128,6 @@ export const Sponsors = () => {
           Buy me a coffee
         </Button>
       </Group>
-
-      <Stack gap={8} align="center">
-        <Text fz={11} fw={600} c="dimmed" tt="uppercase" lts={0.5}>
-          Share this template
-        </Text>
-        <Group gap="xs" justify="center">
-          {shareLinks.map((item) => (
-            <ActionIcon
-              key={item.key}
-              component="a"
-              href={item.href}
-              target="_blank"
-              rel="noreferrer noopener"
-              variant="subtle"
-              color="gray"
-              size="lg"
-              radius="xl"
-              aria-label={item.label}
-            >
-              {item.icon}
-            </ActionIcon>
-          ))}
-        </Group>
-      </Stack>
     </Stack>
   );
 };

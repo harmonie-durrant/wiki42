@@ -1,7 +1,7 @@
 'use client';
 
 import { BorderAnimate, type BorderAnimateProps } from '@gfazioli/mantine-border-animate';
-import { IconArrowRight, IconFileText, IconPackages } from '@tabler/icons-react';
+import { IconArrowRight, IconFileText, IconFlag, IconPackages, IconSquare } from '@tabler/icons-react';
 import { Group, SimpleGrid, Stack, Text, ThemeIcon, Title, UnstyledButton } from '@mantine/core';
 import { Sponsors } from '../Sponsors/Sponsors';
 import classes from './Content.module.css';
@@ -55,10 +55,10 @@ export const Content = () => {
     <Stack align="center" my="2vh">
       <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="xl" maw={860} w="100%" mx="auto" my={32}>
         <EcosystemBox
-          href="https://mantine-extensions.vercel.app/"
-          icon={<IconPackages size={20} />}
-          title="Mantine Extensions Hub"
-          description="Browse 25+ Mantine UI extensions — split panes, onboarding tours, players, parallax and more — ready to drop into this template."
+          href="https://minesweeper.harmoniedurrant.com/"
+          icon={<IconFlag size={20} />}
+          title="Minesweeper"
+          description="The docs are coming soon so for now take a look at one of my projects."
           beamProps={{
             beamMode: 'dot',
             colorFrom: 'cyan',
@@ -68,17 +68,16 @@ export const Content = () => {
           }}
         />
         <EcosystemBox
-          href="https://gfazioli.github.io/next-app-fumadocs-template/"
-          icon={<IconFileText size={20} />}
-          title="Fumadocs template"
-          description="Prefer Fumadocs? The same starter with fumadocs-core under the hood and a docs UI built 100% with Mantine."
+          href="https://voxels.harmoniedurrant.com/"
+          icon={<IconPackages size={20} />}
+          title="Voxels"
+          description="The docs are coming soon so for now take a look at one of my projects."
           beamProps={{
-            beamMode: 'wedge',
-            colorFrom: 'pink',
-            colorTo: 'grape',
-            spread: 72,
-            duration: 8,
-            reverse: true,
+            beamMode: 'dot',
+            colorFrom: 'cyan',
+            colorTo: 'indigo',
+            size: 'lg',
+            duration: 6,
           }}
         />
       </SimpleGrid>

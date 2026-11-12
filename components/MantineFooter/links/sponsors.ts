@@ -12,7 +12,4 @@ export interface Sponsor {
  * Add new sponsors here — the change propagates to every derived site
  * through the usual template propagation flow.
  */
-export const sponsors: Sponsor[] = [
-  { key: 'kastov', name: 'kastov', github: 'kastov' },
-  { key: 'guimazza', name: 'guimazza', github: 'guimazza' },
-];
+export const sponsors: Sponsor[] = [];
