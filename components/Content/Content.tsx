@@ -52,7 +52,10 @@ const WikiCard = ({
           >
             {icon}
           </ThemeIcon>
-          <Title order={3}>{title}</Title>
+          {/* h2 after the page h1, styled as h3: headings must not skip levels. */}
+          <Title order={2} size="h3">
+            {title}
+          </Title>
         </Group>
         <Text c="dimmed" fz="sm">
           {description}

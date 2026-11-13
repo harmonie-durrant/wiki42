@@ -17,3 +17,14 @@ h5,
 h6 {
   font-family: var(--mantine-font-family-headings);
 }
+
+/* Mantine's dimmed grey is under the WCAG AA minimum of 4.5:1 for text: gray.6 is 3.3:1 on
+   white and dark.2 4.0:1 on #242424. gray.7 (8.2:1) and dark.1 (7.8:1) pass. Same selectors as
+   Mantine's own, loaded after it, so these win. */
+:root[data-mantine-color-scheme='light'] {
+  --mantine-color-dimmed: var(--mantine-color-gray-7);
+}
+
+:root[data-mantine-color-scheme='dark'] {
+  --mantine-color-dimmed: var(--mantine-color-dark-1);
+}
