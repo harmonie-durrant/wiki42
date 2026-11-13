@@ -5,13 +5,15 @@ export default {
    */
   metadata: {
     title: {
-      default: 'Wiki42',
-      template: '%s | Wiki42',
+      // The home page title, and the suffix of every other page. Titles over ~60 characters are
+      // cut off in Google results, so the suffix stays short.
+      default: 'Wiki42 · The unofficial 42 school wiki',
+      template: '%s | Wiki42 · 42 school wiki',
     },
     description:
-      'The unofficial 42 wiki, made for current and future 42 students, by the 42 community.',
+      'The unofficial 42 school wiki, written by students: admissions, the Piscine, the Common Core, and guides to the shell, Makefiles and processes.',
     metadataBase: new URL('https://wiki42.harmoniedurrant.com/'),
-    keywords: ['Wiki42', '42', '42 school', 'wiki'],
+    keywords: ['Wiki42', '42', '42 school', 'école 42', 'wiki', 'Piscine', 'Common Core'],
     generator: 'Next.js',
     applicationName: 'Wiki42',
     appleWebApp: {
@@ -27,8 +29,10 @@ export default {
     other: {
       'msapplication-TileColor': '#fff',
     },
+    // `twitter:site` takes an @handle, not a URL, so it is left out. The image comes from
+    // app/opengraph-image.tsx.
     twitter: {
-      site: 'https://wiki42.harmoniedurrant.com/',
+      card: 'summary_large_image',
     },
     alternates: {
       // https://github.com/vercel/next.js/discussions/50189#discussioncomment-10826632
