@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a **Next.js 16 + Mantine 9 + Nextra 4** template used as the documentation site foundation for the Mantine Extensions ecosystem. It serves as a reusable starter for building docs sites with integrated Mantine components.
+Wiki42 is the unofficial 42 wiki, made for current and future 42 students by the 42 community. It is a **Next.js 16 + Mantine 9 + Nextra 4** site: MDX pages in `content/`, served under `/wiki`.
 
 ## Commands
 
@@ -12,10 +12,7 @@ This is a **Next.js 16 + Mantine 9 + Nextra 4** template used as the documentati
 |---------|---------|
 | `yarn dev` | Start Next.js dev server |
 | `yarn build` | Production build (Next.js + pagefind search index) |
-| `yarn test` | Full suite: typegen, oxfmt, lint, typecheck, jest |
-| `yarn jest` | Run Jest tests only |
-| `yarn jest:watch` | Jest in watch mode |
-| `yarn jest -- path/to/file` | Run a single test file |
+| `yarn test` | Checks: typegen, oxfmt, lint, typecheck |
 | `yarn typecheck` | TypeScript type checking (`tsc --noEmit`) |
 | `yarn lint` | oxlint + Stylelint |
 | `yarn format:write` | Auto-format all TS/TSX/CSS files (oxfmt) |
@@ -28,8 +25,8 @@ This is a **Next.js 16 + Mantine 9 + Nextra 4** template used as the documentati
 ### Routing & Content
 
 - **App Router** (`app/`): Next.js 16 app router with Nextra integration
-- **Docs content** (`content/`): MDX files rendered via Nextra at `/docs/[[...mdxPath]]`
-- Nextra is configured with `contentDirBasePath: '/docs'` — all MDX content is served under `/docs`
+- **Wiki content** (`content/`): MDX files rendered via Nextra at `/wiki/[[...mdxPath]]`
+- Nextra is configured with `contentDirBasePath: '/wiki'` — all MDX content is served under `/wiki`
 - `content/_meta.ts` controls sidebar navigation order and labels
 
 ### Layout & Theme Integration
@@ -44,10 +41,11 @@ This is a **Next.js 16 + Mantine 9 + Nextra 4** template used as the documentati
 
 ### Key Components (`components/`)
 
-- `MantineNavBar` / `MantineFooter` — custom Nextra layout replacements
+- `MantineNavBar` — custom Nextra navbar
 - `ColorSchemeControl` / `ColorSchemeToggle` — dark mode toggle
 - `ReleaseNotes` — fetches GitHub releases via `/api/github-releases`
 - `Logo`, `Welcome`, `Content` — branding and landing page components
+- `Contributors` / `Sponsors` — home-page walls with their calls to action; the contributor list is `components/Contributors/list.ts`
 
 ### API Routes (`app/api/`)
 

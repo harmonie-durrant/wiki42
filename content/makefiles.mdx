@@ -1,0 +1,212 @@
+---
+description: "How Makefiles work: rules, targets and prerequisites, variables, automatic variables, pattern rules, and the all/clean/fclean/re rules 42 projects expect."
+---
+
+# Makefiles
+
+Almost every 42 project asks you to submit a **Makefile**: a file that tells the `make` program how to build your project. This guide explains how `make` thinks, so you can write your own Makefiles instead of copying one you don't understand.
+
+## Why `make`?
+
+You could compile a project with one long command:
+
+```sh
+cc -Wall -Wextra -Werror main.c parse.c render.c -o my_program
+```
+
+That works, but it recompiles **every** file each time, even if you changed only one. `make` solves this: it knows which files depend on which, compares their modification dates, and rebuilds **only what is out of date**.
+
+## Rules
+
+A Makefile is a list of **rules**. Each rule has three parts:
+
+```makefile
+target: prerequisites
+	recipe
+```
+
+- The **target** is usually a file to create, such as `my_program` or `main.o`.
+- The **prerequisites** are the files the target is built from.
+- The **recipe** is the shell command(s) that build the target.
+
+> [!WARNING]
+>
+> Each recipe line must start with a **tab** character, not spaces. With spaces, `make` stops with `missing separator`. Check that your editor doesn't turn tabs into spaces in Makefiles.
+
+A small example:
+
+```makefile
+my_program: main.o utils.o
+	cc main.o utils.o -o my_program
+
+main.o: main.c utils.h
+	cc -Wall -Wextra -Werror -c main.c -o main.o
+
+utils.o: utils.c utils.h
+	cc -Wall -Wextra -Werror -c utils.c -o utils.o
+```
+
+## How `make` decides what to rebuild
+
+When you run `make my_program`:
+
+1. `make` looks at the prerequisites of `my_program`: `main.o` and `utils.o`.
+2. For each one, it first checks *its* rule, recursively: is `main.o` older than `main.c` or `utils.h`? If so, it runs the recipe for `main.o`.
+3. Finally, if any prerequisite is newer than `my_program` (or `my_program` doesn't exist), it runs the recipe for `my_program`.
+
+If nothing changed, `make` prints something like `make: 'my_program' is up to date.` and does nothing. Running `make` without a target builds the **first rule** of the file, which is why `all` usually comes first.
+
+## Variables
+
+Variables avoid repeating yourself:
+
+```makefile
+NAME   = my_program
+CC     = cc
+CFLAGS = -Wall -Wextra -Werror
+SRCS   = main.c utils.c
+OBJS   = $(SRCS:.c=.o)
+```
+
+- You use a variable with `$(NAME)`.
+- `$(SRCS:.c=.o)` is a **substitution reference**: it takes `SRCS` and replaces `.c` with `.o`, giving `main.o utils.o`.
+
+> [!NOTE]
+>
+> Many 42 subjects forbid wildcards such as `$(wildcard *.c)` and expect you to list every source file explicitly. Check your subject.
+
+## Automatic variables
+
+Inside a recipe, `make` gives you shortcuts for the current rule:
+
+| Variable | Meaning                                  |
+| -------- | ---------------------------------------- |
+| `$@`     | The target                               |
+| `$<`     | The first prerequisite                   |
+| `$^`     | All the prerequisites, without duplicates |
+
+So the rule for the program becomes:
+
+```makefile
+$(NAME): $(OBJS)
+	$(CC) $(CFLAGS) $^ -o $@
+```
+
+## Pattern rules
+
+Writing one rule per `.o` file doesn't scale. A **pattern rule** describes how to build *any* `.o` from the matching `.c`:
+
+```makefile
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+```
+
+`%` matches the same stem on both sides: to build `parse.o`, `make` uses `parse.c`.
+
+## Phony targets
+
+Some targets are not files, they are actions: `clean` doesn't create a file called `clean`. Declare them as **phony**, so `make` always runs them, even if a file with that name happens to exist:
+
+```makefile
+.PHONY: all clean fclean re
+```
+
+## The rules 42 expects
+
+Most subjects require at least these rules:
+
+| Rule      | What it does                                         |
+| --------- | ---------------------------------------------------- |
+| `$(NAME)` | Builds the program or library                        |
+| `all`     | Builds everything; it is the default rule            |
+| `clean`   | Deletes the object files                             |
+| `fclean`  | Runs `clean` and also deletes `$(NAME)`              |
+| `re`      | Runs `fclean`, then `all`: a full rebuild            |
+
+Some subjects add a `bonus` rule. Read yours.
+
+## A complete example
+
+```makefile
+NAME   = my_program
+CC     = cc
+CFLAGS = -Wall -Wextra -Werror
+
+SRCS   = main.c utils.c
+OBJS   = $(SRCS:.c=.o)
+
+all: $(NAME)
+
+$(NAME): $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+clean:
+	rm -f $(OBJS)
+
+fclean: clean
+	rm -f $(NAME)
+
+re: fclean all
+
+.PHONY: all clean fclean re
+```
+
+## Relinking
+
+**Relinking** means `make` rebuilds your program even though nothing changed. Evaluators check for it by running `make` twice: the second run must do nothing. A Makefile that relinks often fails the evaluation.
+
+Common causes:
+
+- A rule depends on a phony target, such as `$(NAME): all` or a prerequisite that is a directory or an action rather than a file.
+- The recipe for `$(NAME)` doesn't actually create a file called `$(NAME)`, so `make` thinks it is always missing.
+- Object files are written somewhere other than where the rule expects them.
+
+To check, run `make`, then `make` again, and read the output.
+
+## Header dependencies
+
+In the example above, changing a `.h` file doesn't trigger a rebuild, because no rule lists headers as prerequisites. The compiler can generate those dependencies for you: compile with `-MMD -MP`, which writes a `.d` file next to each `.o`, and include them at the end of the Makefile:
+
+```makefile
+CFLAGS += -MMD -MP
+DEPS    = $(OBJS:.o=.d)
+
+-include $(DEPS)
+```
+
+The `-` before `include` tells `make` not to complain when the `.d` files don't exist yet. Remember to delete the `.d` files in `clean` too.
+
+## Building a library in a subfolder
+
+When your project uses your Libft, let its own Makefile build it with `make -C`:
+
+```makefile
+LIBFT = libft/libft.a
+
+$(NAME): $(OBJS) $(LIBFT)
+	$(CC) $(CFLAGS) $(OBJS) $(LIBFT) -o $(NAME)
+
+$(LIBFT):
+	$(MAKE) -C libft
+```
+
+Use `$(MAKE)` rather than `make` to call `make` recursively, and remember to call the library's `clean` and `fclean` from yours.
+
+## Useful options
+
+| Command        | What it does                                      |
+| -------------- | ------------------------------------------------- |
+| `make -n`      | Prints the commands it would run, without running them |
+| `make -C dir`  | Runs `make` in another directory                  |
+| `make -j`      | Builds several targets in parallel                |
+| `make re`      | Forces a full rebuild                             |
+
+To hide a command's echo, start its recipe line with `@`, for example `@echo "Done"`.
+
+## Going further
+
+- `man make`
+- The [GNU make manual](https://www.gnu.org/software/make/manual/make.html)

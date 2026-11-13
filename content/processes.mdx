@@ -1,0 +1,193 @@
+---
+description: "How Linux programs run: processes and PIDs, memory layout, main's arguments, file descriptors, fork/exec/wait, exit statuses, and signals such as SIGINT, SIGKILL and SIGSEGV."
+---
+
+# Programs and processes
+
+When you run `./a.out`, a lot happens between pressing Enter and your `main` starting. This guide explains how Linux (and other Unix systems, such as macOS) runs programs. It is the background you need for projects like pipex, minitalk, philosophers and minishell.
+
+## Program vs process
+
+- A **program** is a file on disk: the executable produced by `cc`, or `/bin/ls`.
+- A **process** is a program *while it runs*: its code loaded in memory, plus its own data, open files and state.
+
+You can run the same program several times at once: each run is a separate process. Every process has a unique number, its **PID** (process ID), and knows the PID of the process that started it, its **parent** (PPID).
+
+```sh
+ps          # your processes in this terminal
+ps aux      # every process on the machine
+echo $$     # the PID of your shell
+```
+
+In C, `getpid()` and `getppid()` return them.
+
+## What a process has
+
+### Memory
+
+Each process gets its own memory space, which other processes can't see. It is divided into areas:
+
+| Area      | Contains                                                         |
+| --------- | ---------------------------------------------------------------- |
+| **Text**  | The program's machine code, read-only                            |
+| **Data**  | Global and `static` variables                                    |
+| **Heap**  | Memory you allocate with `malloc`, until you `free` it           |
+| **Stack** | Local variables and function calls; grows and shrinks automatically |
+
+Reading or writing outside the memory your process owns ends in a **segmentation fault**, which is a [signal](#signals): `SIGSEGV`.
+
+### Arguments and environment
+
+The shell passes the command's words and the environment to your program:
+
+```c
+int main(int argc, char **argv, char **envp)
+```
+
+- `argc` is the number of arguments, including the program name.
+- `argv` is the array of arguments: `argv[0]` is the program name, and `argv[argc]` is `NULL`.
+- `envp` is the environment, as `"NAME=value"` strings, ending with `NULL`. (`envp` is common on Unix but not part of the C standard; `getenv("PATH")` reads a single variable.)
+
+Running `./prog hello "big world"` gives `argc == 3`, `argv[1] == "hello"` and `argv[2] == "big world"`: the shell has already removed the quotes.
+
+### File descriptors
+
+A process talks to files, terminals and pipes through **file descriptors**: small integers that index its table of open files. Every process starts with three:
+
+| fd | Name     | Usually                 |
+| -- | -------- | ----------------------- |
+| 0  | `stdin`  | the keyboard            |
+| 1  | `stdout` | the terminal            |
+| 2  | `stderr` | the terminal            |
+
+`open()` returns the next free number (often 3), `read()` and `write()` use it, and `close()` frees it. The shell's [redirections and pipes](/wiki/shell#redirections) work by changing what these numbers point to before the program starts, which is why the program itself doesn't need to know.
+
+## How a process is created
+
+On Unix, new processes are made in two steps.
+
+1. **`fork()`** creates a copy of the current process. Both copies continue from the same line; `fork` returns `0` in the child and the child's PID in the parent, so each knows which one it is.
+2. **`execve()`** replaces the current process's program with another one, keeping the same PID and open file descriptors. If it succeeds, it never returns: the old code is gone.
+
+That is exactly what your shell does when you type `ls`: it forks, the child calls `execve("/bin/ls", ...)`, and the parent waits.
+
+```c
+pid_t pid = fork();
+if (pid == 0)
+{
+    /* child: become another program */
+    execve(path, argv, envp);
+    perror("execve");   /* only reached if execve failed */
+    exit(127);
+}
+/* parent: wait for the child to finish */
+int status;
+waitpid(pid, &status, 0);
+```
+
+### Waiting, zombies and orphans
+
+- A parent collects a finished child's exit status with **`wait()`** or **`waitpid()`**.
+- Until the parent does, the finished child stays in the process table as a **zombie**: it uses no CPU or memory, but keeps its PID taken. Many zombies mean a program forgot to wait.
+- If the parent ends first, the child becomes an **orphan** and is adopted by process 1 (`init` or `systemd`), which waits for it.
+
+## Exit status
+
+A process ends by returning from `main` or by calling `exit()`. The number it returns is its **exit status**: `0` for success, anything else (up to 255) for an error. The shell stores it in [`$?`](/wiki/shell#exit-status).
+
+If a signal kills the process instead, the shell reports `128 +` the signal's number: a program stopped with `Ctrl+C` (`SIGINT`, signal 2) gives `$?` = 130. In C, the parent decodes the status from `waitpid` with the `WIFEXITED`, `WEXITSTATUS`, `WIFSIGNALED` and `WTERMSIG` macros.
+
+## Signals
+
+A **signal** is a short notification sent to a process, by the kernel or by another process. It doesn't carry data: only *which* signal it is. Signals interrupt the process wherever it is, which is why they are used for urgent events: "stop", "you crashed", "your child finished".
+
+### Where signals come from
+
+- **The terminal**, when you press a key combination:
+
+  | Keys     | Signal    | Default effect             |
+  | -------- | --------- | -------------------------- |
+  | `Ctrl+C` | `SIGINT`  | Terminates the program     |
+  | `Ctrl+\` | `SIGQUIT` | Terminates, with a core dump |
+  | `Ctrl+Z` | `SIGTSTP` | Suspends the program       |
+
+  `Ctrl+D` is **not** a signal: it tells the terminal to end the input, so the program's next `read` returns 0 (end of file).
+
+- **The kernel**, when the process does something illegal: `SIGSEGV` for invalid memory access, `SIGFPE` for an integer division by zero, `SIGPIPE` for writing to a pipe nobody reads.
+- **Other processes**, with the `kill` command or the `kill()` function. Despite the name, `kill` can send any signal.
+
+  ```sh
+  kill 4242            # sends SIGTERM to process 4242
+  kill -INT 4242       # sends SIGINT
+  kill -9 4242         # sends SIGKILL (signal 9)
+  kill -l              # lists every signal
+  ```
+
+### Common signals
+
+Numbers are those of Linux on x86; some differ on macOS, so use the names in your code.
+
+| Signal    | No. | Default        | When                                                |
+| --------- | --- | -------------- | --------------------------------------------------- |
+| `SIGHUP`  | 1   | Terminate      | The terminal was closed                             |
+| `SIGINT`  | 2   | Terminate      | `Ctrl+C`: the user asks the program to stop         |
+| `SIGQUIT` | 3   | Core dump      | `Ctrl+\`                                            |
+| `SIGABRT` | 6   | Core dump      | `abort()`, or a failed `assert`                     |
+| `SIGFPE`  | 8   | Core dump      | Arithmetic error, such as integer division by zero  |
+| `SIGKILL` | 9   | Terminate      | Forced kill: can't be caught or ignored             |
+| `SIGSEGV` | 11  | Core dump      | Invalid memory access: the "segfault"               |
+| `SIGPIPE` | 13  | Terminate      | Writing to a pipe whose reading end is closed       |
+| `SIGTERM` | 15  | Terminate      | Polite request to stop; `kill`'s default            |
+| `SIGCHLD` | 17  | Ignore         | A child process stopped or ended                    |
+| `SIGUSR1`, `SIGUSR2` | 10, 12 | Terminate | Free for your own use                     |
+| `SIGSTOP` | 19  | Stop           | Forced pause: can't be caught or ignored            |
+| `SIGTSTP` | 20  | Stop           | `Ctrl+Z`                                            |
+| `SIGCONT` | 18  | Continue       | Resumes a stopped process (`fg`, `bg`)              |
+
+`man 7 signal` has the full list.
+
+### Handling a signal
+
+For each signal, a process can keep the **default** action, **ignore** it, or **catch** it by running a function of its own, a *handler*. `SIGKILL` and `SIGSTOP` are the exceptions: they always do their default, so you can always stop a process.
+
+`sigaction()` installs a handler (the older `signal()` also exists but behaves differently between systems):
+
+```c
+#include <signal.h>
+#include <unistd.h>
+
+void handle_sigint(int sig)
+{
+    (void)sig;
+    write(1, "\nCaught Ctrl+C\n", 15);
+}
+
+int main(void)
+{
+    struct sigaction sa;
+
+    sa.sa_handler = handle_sigint;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = 0;
+    sigaction(SIGINT, &sa, NULL);
+    while (1)
+        pause();   /* sleep until a signal arrives */
+}
+```
+
+Now `Ctrl+C` prints a message instead of ending the program. Stop it with `Ctrl+\`, or `kill` from another terminal.
+
+> [!WARNING]
+>
+> A handler can run at any moment, even in the middle of a `printf` or a `malloc` in your main code. Inside a handler, only call **async-signal-safe** functions (`write` is one, `printf` and `malloc` are not), and keep it short: setting a flag of type `volatile sig_atomic_t` and returning is the safest pattern. `man 7 signal-safety` lists the safe functions.
+
+A few more things worth knowing:
+
+- **Signals don't queue.** If the same signal arrives several times while it is blocked or being handled, the process may receive it only once.
+- **`fork` and `exec`.** A child inherits its parent's handlers; `execve` resets caught signals to their default (ignored signals stay ignored).
+- **`sa_flags`**: `SA_SIGINFO` gives your handler extra information, such as the sender's PID; `SA_RESTART` makes some interrupted system calls restart instead of failing.
+
+## Going further
+
+- `man 2 fork`, `man 2 execve`, `man 2 waitpid`, `man 2 sigaction`, `man 7 signal`
+- [The Linux man-pages project](https://man7.org/linux/man-pages/)

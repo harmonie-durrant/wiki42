@@ -1,0 +1,276 @@
+---
+description: "How the Unix shell works: commands and arguments, paths, permissions, redirections, pipes, variables, quoting, globbing, exit statuses and scripts."
+---
+
+# Shell
+
+The **shell** is the program that reads the commands you type in a terminal and runs them. At 42 you use it all day: to move around, compile, run Git, and test your programs. In the Piscine and in projects like minishell, you will also learn how it works inside.
+
+The most common shells are **bash** and **zsh**. The basics on this page work the same in both.
+
+## Commands and arguments
+
+A command is a program name followed by **arguments**, separated by spaces:
+
+```sh
+ls -l /tmp
+```
+
+- `ls` is the program to run.
+- `-l` is an **option/flag** (an argument that starts with `-`), which changes how `ls` behaves.
+- `/tmp` is an argument telling `ls` which directory to list.
+
+To learn what a command does and which options it accepts, read its **manual**: `man ls`. Press `q` to quit, `/` to search.
+
+> [!TIP]
+>
+> **RTFM**: "Read The F\*\*\*ing Manual". You will hear it a lot at 42, usually as a friendly nudge: the answer to your question is probably already in the `man` page. Before asking someone, check the manual first. Manual pages are split into numbered sections: `man 1 printf` is the shell command, `man 3 printf` is the C function, and `man man` explains the rest.
+
+### Where commands come from
+
+When you type `ls`, the shell searches for a program called `ls` in each directory listed in the `PATH` variable, in order:
+
+```sh
+echo $PATH
+which ls
+```
+
+Some commands, such as `cd`, `echo` and `export`, are **built-ins**: they are part of the shell itself, not separate programs. `cd` has to be a built-in: a separate program can't change the shell's current directory.
+
+## Navigating the file system
+
+| Command          | What it does                                  |
+| ---------------- | --------------------------------------------- |
+| `pwd`            | Prints the current directory                  |
+| `ls`             | Lists files; `ls -la` includes hidden files   |
+| `cd dir`         | Moves into `dir`                              |
+| `cd ..`          | Moves to the parent directory                 |
+| `cd` or `cd ~`   | Moves to your home directory                  |
+| `cd -`           | Moves back to the previous directory          |
+| `mkdir dir`      | Creates a directory                           |
+| `touch file`     | Creates an empty file, or updates its date    |
+| `cp src dst`     | Copies a file (`cp -r` for directories)       |
+| `mv src dst`     | Moves or renames                              |
+| `rm file`        | Deletes a file (`rm -r` for directories)      |
+| `cat file`       | Prints a file                                 |
+
+> [!CAUTION]
+>
+> `rm` doesn't use a trash can: deleted files are gone. Double-check before running `rm -rf`.
+
+### Paths
+
+- An **absolute path** starts from the root: `/home/login/projects`.
+- A **relative path** starts from the current directory: `projects/libft`.
+- `.` is the current directory, `..` its parent, `~` your home directory.
+- Files whose name starts with a `.` are **hidden**: `ls` only shows them with `-a`.
+
+## Permissions
+
+`ls -l` shows each file's permissions:
+
+```text copy
+-rwxr-xr-- 1 login staff 4096 Nov 12 10:00 script.sh
+```
+
+The first character is the type (`-` file, `d` directory, `l` link). Then come three groups of `rwx`, for the **owner**, the **group**, and **others**:
+
+- `r` read, `w` write, `x` execute (for a directory, `x` means you can enter it).
+
+Change them with `chmod`:
+
+```sh
+chmod u+x script.sh   # add execute permission for the owner
+chmod 644 file.txt    # rw-r--r--
+```
+
+In the numeric form, each digit is the sum of `r` = 4, `w` = 2 and `x` = 1, for owner, group and others.
+
+## Redirections
+
+Every program starts with three open streams:
+
+| Number | Name     | Default        |
+| ------ | -------- | -------------- |
+| 0      | `stdin`  | the keyboard   |
+| 1      | `stdout` | the terminal   |
+| 2      | `stderr` | the terminal   |
+
+**Redirections** connect them to files instead:
+
+```sh
+ls > list.txt         # stdout to a file (overwrites it)
+ls >> list.txt        # stdout to a file (appends)
+wc -l < list.txt      # stdin from a file
+cc main.c 2> errors   # stderr to a file
+cmd > out 2>&1        # stdout and stderr to the same file
+```
+
+A **heredoc** feeds several lines to a command's stdin, up to a delimiter:
+
+```sh
+cat << EOF
+first line
+second line
+EOF
+```
+
+`EOF` here is the **delimiter**: a word you choose that marks where the text ends. `<< EOF` tells the shell "read the following lines until you meet a line containing exactly `EOF`". The shell then gives those lines (without the delimiter line) to `cat` as its stdin, as if you had typed them on the keyboard.
+
+- `EOF` stands for "End Of File" and is only a convention: any word works, such as `<< END` or `<< STOP`. Pick one that doesn't appear in your text.
+- The closing delimiter must be alone on its line, with no spaces before or after it, or the shell keeps reading.
+- Variables are expanded inside the text (`$HOME` becomes your home directory). Quote the delimiter, as in `<< 'EOF'`, to keep the text exactly as written.
+- Typed directly in a terminal, the shell shows a `>` prompt for each line until you type the delimiter.
+
+## Pipes
+
+A **pipe** `|` connects the stdout of one command to the stdin of the next, so you can chain small tools:
+
+```sh
+cat file.txt | grep error | wc -l
+```
+
+Each command in a pipeline runs as its own process, at the same time as the others.
+For example this command counts the number of lines `wc -l` that contain the word "error" `grep error` in file.txt `cat file.txt`
+
+## Variables and the environment
+
+```sh
+name=world            # no spaces around =
+echo "Hello $name"
+export EDITOR=vim     # make it visible to programs you run
+env                   # list the environment
+```
+
+A plain variable lives only in the current shell. `export` puts it in the **environment**, which is copied to every program the shell starts. Useful ones: `PATH`, `HOME`, `USER`, `PWD`.
+
+## Quoting
+
+The shell gives special meaning to spaces, `$`, `*` and more. Quotes control that:
+
+- **Single quotes** `'...'` keep everything literal: `echo '$HOME'` prints `$HOME`.
+- **Double quotes** `"..."` keep spaces but still expand variables: `echo "$HOME"` prints your home directory.
+- A **backslash** `\` escapes the next character.
+
+```sh
+user="Marvin"
+
+echo Hello   $user    *.c       # Hello Marvin main.c utils.c
+echo 'Hello   $user    *.c'     # Hello   $user    *.c
+echo "Hello   $user    *.c"     # Hello   Marvin    *.c
+echo "Hello \$user, it's $user" # Hello $user, it's Marvin
+echo Hello\ \ \ $user           # Hello   Marvin
+```
+
+Line by line, in a folder containing `main.c` and `utils.c`:
+
+1. **No quotes:** the shell splits on spaces (the extra spaces disappear), expands `$user`, and replaces `*.c` with the matching files.
+2. **Single quotes:** nothing is interpreted. `echo` receives the text exactly as written.
+3. **Double quotes:** the spaces and `*.c` are kept as they are, but `$user` is still expanded.
+4. **Backslash inside double quotes:** `\$` stops that one `$` from being expanded, while the second `$user` still is. A single quote needs no escaping inside double quotes.
+5. **Backslash without quotes:** each `\ ` keeps a space that the shell would otherwise remove.
+
+Quoting matters most with file names that contain spaces: `touch "my file.txt"` creates one file, while `touch my file.txt` creates two, `my` and `file.txt`.
+
+## Globbing
+
+Before running a command, the shell expands **wildcards** into matching file names:
+
+- `*` matches any characters: `ls *.c`
+- `?` matches one character: `ls file?.txt`
+- `[abc]` matches one of the listed characters
+
+The program never sees the `*`: it receives the list of matching files as arguments.
+
+### Examples
+
+Imagine a folder containing these files:
+
+```text copy
+Makefile  ex00.c  ex01.c  ex02.c  ex10.c  main.c  main.o  notes.txt  .hidden.c  srcs/parse.c  srcs/render.c
+```
+
+| Pattern       | Expands to                                  | Why                                              |
+| ------------- | ------------------------------------------- | ------------------------------------------------ |
+| `*.c`         | `ex00.c ex01.c ex02.c ex10.c main.c`        | Any name ending in `.c`; `.hidden.c` is skipped  |
+| `main.*`      | `main.c main.o`                             | `main.` followed by anything                     |
+| `ex0?.c`      | `ex00.c ex01.c ex02.c`                      | `?` is exactly one character                     |
+| `ex0[12].c`   | `ex01.c ex02.c`                             | One character from the list                      |
+| `ex[0-1]0.c`  | `ex00.c ex10.c`                             | One character from a range                       |
+| `ex0[!0].c`   | `ex01.c ex02.c`                             | `[!...]` is any character *not* in the list      |
+| `srcs/*.c`    | `srcs/parse.c srcs/render.c`                | Wildcards work in folder paths too               |
+| `*`           | every visible file and folder               | Hidden files (starting with `.`) need `.*`       |
+
+A few things to know:
+
+- **Preview before acting.** `echo` shows what a pattern expands to without doing anything, which is a safe check before an `rm`:
+
+  ```sh
+  echo *.o      # main.o
+  rm *.o
+  ```
+
+- **No match, no expansion.** In bash, if nothing matches, the pattern is passed as is: `ls *.py` gives `ls` the literal argument `*.py`, and `ls` reports that the file doesn't exist. (zsh stops with a `no matches found` error instead.)
+- **Quotes turn globbing off.** `echo "*.c"` prints `*.c`. Quote a pattern when you want the program to receive it, such as `find . -name "*.c"`, which lets `find` search subfolders itself.
+- **Globbing is not regex.** In a glob, `*` alone means "anything". In regular expressions, as used by `grep`, `*` means "the previous character, repeated".
+
+## Exit status
+
+Every command returns an **exit status**: `0` means success, anything else means failure. `$?` holds the last one:
+
+```sh
+ls /nonexistent
+echo $?               # prints a non-zero value
+```
+
+Use it to chain commands:
+
+```sh
+make && ./my_program  # run only if make succeeded
+make || echo "Build failed"
+```
+
+`;` runs commands one after another, whatever their status. For example this command commits all files to git and pushes it all in one command:
+
+```sh
+git add -a ; git commit -m "Inittial commit" ; git push
+```
+
+
+## Processes and jobs
+
+| Keys or command | What it does                                       |
+| --------------- | -------------------------------------------------- |
+| `Ctrl+C`        | Interrupts the running program (sends `SIGINT`)    |
+| `Ctrl+D`        | Sends end-of-file: closes stdin, or exits the shell |
+| `Ctrl+Z`        | Suspends the running program                       |
+| `cmd &`         | Runs a command in the background                   |
+| `jobs`, `fg`, `bg` | Lists, resumes in front, or resumes in the background |
+| `ps`, `kill PID` | Lists processes, sends a signal to one            |
+
+`SIGINT` is a **signal**: a short message the system sends to a program, here meaning "the user asked you to stop". `Ctrl+Z` and `kill` work with signals too.
+To learn what signals are, which ones exist and how programs react to them, read [Programs and processes](/wiki/processes#signals).
+
+## Shell scripts
+
+A script is a file of shell commands:
+
+```sh
+#!/bin/sh
+echo "Compiling..."
+make && echo "Done"
+```
+
+The first line, the **shebang**, says which program runs the script. Make it executable with `chmod +x script.sh` and run it with `./script.sh`.
+
+## Productivity tips
+
+- **Tab** completes commands and file names; press it twice to see all options.
+- **Up/down arrows** browse your history; **Ctrl+R** searches it.
+- `history` lists past commands.
+- Customise your shell in `~/.bashrc` or `~/.zshrc`, for example with aliases: `alias gs='git status'`.
+
+## Going further
+
+- `man bash` or `man zsh`
+- The [Bash reference manual](https://www.gnu.org/software/bash/manual/bash.html)

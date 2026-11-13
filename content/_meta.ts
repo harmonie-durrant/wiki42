@@ -7,6 +7,13 @@ export default {
   admissions: '',
   piscine: 'The Piscine',
   'common-core': 'The Common Core',
+  '####': {
+    type: 'separator',
+    title: 'Guides',
+  },
+  shell: '',
+  processes: 'Programs and processes',
+  makefiles: '',
   '###': {
     type: 'separator',
     title: 'Reference',
