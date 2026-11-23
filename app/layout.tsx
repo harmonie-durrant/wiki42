@@ -6,7 +6,7 @@ import '@gfazioli/mantine-text-animate/styles.css';
 // Mantine theme overrides (page background, heading font)
 import '@/theme/global.css';
 
-import { Analytics } from '@vercel/analytics/react';
+import { Analytics } from '@vercel/analytics/next';
 import { Outfit } from 'next/font/google';
 import { Layout } from 'nextra-theme-docs';
 import { Banner, Head } from 'nextra/components';
